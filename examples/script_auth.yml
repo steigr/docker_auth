@@ -1,0 +1,38 @@
+# A simple example. See reference.yml for explanation for explanation of all options.
+#
+#  auth:
+#    token:
+#      realm: "https://127.0.0.1:5001/auth"
+#      service: "Docker registry"
+#      issuer: "Acme auth server"
+#      rootcertbundle: "/path/to/server.pem"
+
+server:
+  addr: ":5001"
+  certificate: "/path/to/server.pem"
+  key: "/path/to/server.key"
+
+token:
+  issuer: "Acme auth server"  # Must match issuer in the Registry config.
+  expiration: 900
+
+# Forward auth data to script. Username and Password provided on stdin. On Success print "OK" without newline
+#
+# Example Script
+# #!/bin/sh
+# read username
+# read password
+# echo "$username with password $password just came along" >> auth_example.log
+# printf "OK"
+#
+shell:
+  command: /my/custom/auth/script
+
+acl:
+  # Admin has full access to everything.
+  - match: {account: "admin"}
+    actions: ["*"]
+  # User "user" can pull stuff.
+  - match: {account: "user"}
+    actions: ["pull"]
+  # Access is denied by default.
